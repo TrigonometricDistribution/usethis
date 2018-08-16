@@ -3,7 +3,7 @@
 \name{use_readme_rmd}
 \alias{use_readme_rmd}
 \alias{use_readme_md}
-\title{Create README files.}
+\title{Create README files}
 \usage{
 use_readme_rmd(open = interactive())
 
@@ -30,4 +30,7 @@ YAML frontmatter and R fenced code blocks (\code{md}) or chunks (\code{Rmd}).
 use_readme_rmd()
 use_readme_md()
 }
+}
+\seealso{
+The \href{http://r-pkgs.had.co.nz/release.html#important-files}{important files section} of \href{http://r-pkgs.had.co.nz}{R Packages}.
 }

@@ -1,21 +1,26 @@
-#' Use RStudio
+#' Add RStudio Project infrastructure
 #'
-#' Creates an `.Rproj` file and adds RStudio files to `.gitignore`
-#' and `.Rbuildignore`.
+#' It is likely that you want to use [create_project()] or [create_package()]
+#' instead of `use_rstudio()`! Both `create_*()` functions can add RStudio
+#' Project infrastructure to a pre-existing project or package. `use_rstudio()`
+#' is mostly for internal use or for those creating a usethis-like package for
+#' their organization. It does the following in the current project, often after
+#' executing `proj_set(..., force = TRUE)`:
+#'   * Creates an `.Rproj` file
+#'   * Adds RStudio files to `.gitignore`
+#'   * Adds RStudio files to `.Rbuildignore`, if project is a package
 #'
 #' @export
 use_rstudio <- function() {
-  use_template(
-    "template.Rproj",
-    paste0(project_name(), ".Rproj")
-  )
+  rproj_file <- path_ext_set(project_name(), "Rproj")
+  new <- use_template("template.Rproj", rproj_file)
 
   use_git_ignore(".Rproj.user")
   if (is_package()) {
-    use_build_ignore(c(paste0(project_name(), ".Rproj"), ".Rproj.user"))
+    use_build_ignore(c(rproj_file, ".Rproj.user"))
   }
 
-  invisible(TRUE)
+  invisible(new)
 }
 
 #' Don't save/load user workspace between sessions
@@ -44,35 +49,35 @@ use_blank_slate <- function(scope = c("user", "project")) {
       "you must set this interactively, for now."
     )
     todo(
-      "In Global Options > General, ",
-      "do NOT check \"Restore .RData into workspace at startup\"."
+      "In {field('Global Options > General')}, ",
+      "do NOT check {field('Restore .RData into workspace at startup')}."
     )
     todo(
-      "In Global Options > General, ",
-      "set \"Save workspace to .RData on exit\" to \"Never\"."
+      "In {field('Global Options > General')}, ",
+      "set {field('Save workspace to .RData on exit')} to {field('Never')}."
     )
     todo(
-      "Call `use_blank_slate(\"project\")` to opt in to the blank slate ",
-      "workflow in this project."
+      "Call {code('use_blank_slate(\"project\")')} to opt in to the ",
+      "blank slate workflow for a specific project."
     )
     return(invisible())
   } # nocov end
 
   if (!is_rstudio_project()) {
-    stop(project_name(), " is not an RStudio Project", call. = FALSE)
+    stop_glue("{value(project_name())} is not an RStudio Project.")
   }
 
   rproj_fields <- modify_rproj(
-    proj_path(rproj_path()),
+    rproj_path(),
     list(RestoreWorkspace = "No", SaveWorkspace = "No")
   )
-  write_utf8(proj_path(rproj_path()), serialize_rproj(rproj_fields))
+  write_utf8(rproj_path(), serialize_rproj(rproj_fields))
   restart_rstudio("Restart RStudio with a blank slate?")
 
   invisible()
 }
 
-# Is base_path an RStudio Project?
+# Is base_path an RStudio Project or inside an RStudio Project?
 is_rstudio_project <- function(base_path = proj_get()) {
   res <- tryCatch(
     rprojroot::find_rstudio_root_file(path = base_path),
@@ -82,9 +87,9 @@ is_rstudio_project <- function(base_path = proj_get()) {
 }
 
 rproj_path <- function(base_path = proj_get()) {
-  rproj_path <- dir(base_path, pattern = "\\.Rproj$")
+  rproj_path <- dir_ls(base_path, regexp = "[.]Rproj$")
   if (length(rproj_path) > 1) {
-    stop("Multiple .Rproj files found", call. = FALSE)
+    stop_glue("Multiple .Rproj files found.")
   }
   if (length(rproj_path) == 1) rproj_path else NA_character_
 }
@@ -101,7 +106,7 @@ in_rstudio <- function(base_path = proj_get()) {
 
   proj <- rstudioapi::getActiveProject()
 
-  normalizePath(proj) == normalizePath(base_path)
+  path_real(proj) == path_real(base_path)
 }
 
 in_rstudio_server <- function() {
@@ -112,7 +117,7 @@ in_rstudio_server <- function() {
 }
 
 parse_rproj <- function(file) {
-  lines <- as.list(readLines(file))
+  lines <- as.list(readLines(file, encoding = "UTF-8"))
   has_colon <- grepl(":", lines)
   fields <- lapply(lines[has_colon], function(x) strsplit(x, split = ": ")[[1]])
   lines[has_colon] <- vapply(fields, `[[`, "character", 2)

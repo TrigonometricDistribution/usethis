@@ -5,7 +5,7 @@
 \alias{use_gpl3_license}
 \alias{use_apl2_license}
 \alias{use_cc0_license}
-\title{Use MIT, GPL-3, or Apache 2.0 license for your package}
+\title{License a package}
 \usage{
 use_mit_license(name = find_name())
 
@@ -39,4 +39,7 @@ See \url{https://choosealicense.com} for more details and other options.
 CRAN does not allow you to include copies of standard licenses in your
 package, so these functions save the license as \code{LICENSE.md} and add it
 to \code{.Rbuildignore}.
+}
+\seealso{
+The \href{http://r-pkgs.had.co.nz/description.html#license}{license section} of \href{http://r-pkgs.had.co.nz}{R Packages}.
 }

@@ -1,4 +1,4 @@
-#' Use MIT, GPL-3, or Apache 2.0 license for your package
+#' License a package
 #'
 #' @description
 #' Adds the necessary infrastructure to declare your package as licensed
@@ -23,15 +23,17 @@
 #' @param name Name of the copyright holder or holders. Separate multiple
 #'   individuals with `;`. You can supply a global default with
 #'   `options(usethis.full_name = "My name")`.
+#' @seealso The [license
+#'   section](http://r-pkgs.had.co.nz/description.html#license) of [R
+#'   Packages](http://r-pkgs.had.co.nz).
 #' @aliases NULL
 NULL
-
-## TODO(jennybc): check if package is a project
 
 #' @rdname licenses
 #' @export
 use_mit_license <- function(name = find_name()) {
   force(name)
+  check_is_package("use_mit_license()")
 
   use_description_field("License", "MIT + file LICENSE", overwrite = TRUE)
   use_license_template("mit", name)
@@ -49,6 +51,7 @@ use_mit_license <- function(name = find_name()) {
 #' @export
 use_gpl3_license <- function(name = find_name()) {
   force(name)
+  check_is_package("use_gpl3_license()")
 
   use_description_field("License", "GPL-3", overwrite = TRUE)
   use_license_template("GPL-3", name)
@@ -58,6 +61,7 @@ use_gpl3_license <- function(name = find_name()) {
 #' @export
 use_apl2_license <- function(name = find_name()) {
   force(name)
+  check_is_package("use_apl2_license()")
 
   use_description_field("License", "Apache License (>= 2.0)", overwrite = TRUE)
   use_license_template("apache-2.0", name)
@@ -67,6 +71,7 @@ use_apl2_license <- function(name = find_name()) {
 #' @export
 use_cc0_license <- function(name = find_name()) {
   force(name)
+  check_is_package("use_cc0_license()")
 
   use_description_field("License", "CC0", overwrite = TRUE)
   use_license_template("cc0", name)
@@ -74,7 +79,7 @@ use_cc0_license <- function(name = find_name()) {
 
 
 use_license_template <- function(license, name) {
-  license_template <- paste0("license-", license, ".md")
+  license_template <- glue("license-{license}.md")
 
   use_template(
     license_template,
@@ -94,20 +99,19 @@ license_data <- function(name, base_path = proj_get()) {
 
 
 find_name <- function() {
-  name <- getOption("devtools.name")
-  if (!is.null(name) && name != "Your name goes here") {
-    return(name)
-  }
-
   name <- getOption("usethis.full_name")
   if (!is.null(name)) {
     return(name)
   }
 
-  stop(
-    code("name"), " argument is missing.\n",
-    "Set it globally with ", code('options(usethis.full_name = "My name")'),
-    ", probably in your ", value(".Rprofile"),
-    call. = FALSE
+  name <- getOption("devtools.name")
+  if (!is.null(name) && name != "Your name goes here") {
+    return(name)
+  }
+
+  stop_glue(
+    "{code('name')} argument is missing.\n",
+    "Set it globally with {code('options(usethis.full_name = \"My name\")')}",
+    ", probably in your {value('.Rprofile')}."
   )
 }

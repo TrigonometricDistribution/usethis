@@ -1,3 +1,6 @@
+^CRAN-RELEASE$
+^usethis-full-logo\.png$
+^principles\.md$
 ^usethis\.Rproj$
 ^\.Rproj\.user$
 ^revdep$
@@ -8,3 +11,7 @@
 ^cran-comments\.md$
 ^appveyor\.yml$
 ^tests/manual$
+^\.github$
+^_pkgdown\.yml$
+^docs$
+^vignettes/articles$

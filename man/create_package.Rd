@@ -3,32 +3,44 @@
 \name{create_package}
 \alias{create_package}
 \alias{create_project}
-\title{Create a new package or project}
+\title{Create a package or project}
 \usage{
-create_package(path, fields = getOption("devtools.desc"),
+create_package(path, fields = NULL,
   rstudio = rstudioapi::isAvailable(), open = interactive())
 
 create_project(path, rstudio = rstudioapi::isAvailable(),
   open = interactive())
 }
 \arguments{
-\item{path}{A path. If it exists, it will be used. If it does not exist, it
-will be created (providing that the parent path exists).}
+\item{path}{A path. If it exists, it is used. If it does not exist, it is
+created, provided that the parent path exists.}
 
-\item{fields}{A named list of fields to add to \file{DESCRIPTION},
-potentially overriding the defaults. If \code{NULL}, retrieved from
-\code{getOption("usethis.description")}, and (for backward compatibility)
-from \code{getOption("devtools.desc")}.}
+\item{fields}{A named list of fields to add to DESCRIPTION, potentially
+overriding default values. See \code{\link[=use_description]{use_description()}} for how you can set
+personalized defaults using package options}
 
-\item{rstudio}{If \code{TRUE}, call \code{\link[=use_rstudio]{use_rstudio()}} to make new package or project
-into an \href{https://support.rstudio.com/hc/en-us/articles/200526207-Using-Projects}{RStudio Project}.}
+\item{rstudio}{If \code{TRUE}, calls \code{\link[=use_rstudio]{use_rstudio()}} to make the new package or
+project into an \href{https://support.rstudio.com/hc/en-us/articles/200526207-Using-Projects}{RStudio Project}.
+If \code{FALSE} and a non-package project, a sentinel \code{.here} file is placed so
+that the directory can be recognized as a project by the
+\href{https://here.r-lib.org}{here} or
+\href{https://rprojroot.r-lib.org}{rprojroot} packages.}
 
-\item{open}{If \code{TRUE} and in RStudio, new project will be opened in a new
-instance, if possible, or will be switched to, otherwise. If \code{TRUE} and not
-in RStudio, working directory will be set to the new project.}
+\item{open}{If \code{TRUE} and in RStudio, a new RStudio project is opened in a
+new instance, if possible, or is switched to, otherwise. If \code{TRUE} and not
+in RStudio (or new project is not an RStudio project), working directory is
+set to the new project.}
 }
 \description{
-Both functions change the active project so that subsequent \code{use_*()} calls
-will affect the project that you've just created. See \code{\link[=proj_set]{proj_set()}} to
-manually reset it.
+These functions create an R project:
+\itemize{
+\item \code{create_package()} creates an R package
+\item \code{create_project()} creates a non-package project, i.e. a data analysis
+project
+}
+
+Both functions can add project infrastructure to an existing directory of
+files or can create a completely new project. Both functions change the
+active project, so that subsequent \code{use_*()} calls affect the project
+that you've just created. See \code{\link[=proj_set]{proj_set()}} to manually reset it.
 }
